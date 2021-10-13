@@ -1,0 +1,52 @@
+import pandas as pd 
+import matplotlib.pyplot as plt
+import numpy as np
+import time
+
+
+from main import get_df, plota_matriz_correlacao
+
+vertigo_ct, vertigo_tr = get_df('de_vertigo')      # pegando os dataframes da vertigo2
+
+threshold = 0.962                          # porcentagem de zeros na coluna da UMP-45
+
+
+map_round_winner_tr = {"CT": 0, "T": 1}
+
+vertigo_tr['round_winner'] = vertigo_ct['round_winner'].replace(map_round_winner_tr)
+
+
+###### ANALISE DO LADO TR
+
+
+map_round_winner_tr = {"CT": 0, "T": 1}
+
+vertigo_tr['round_winner'] = vertigo_tr['round_winner'].replace(map_round_winner_tr)
+
+
+cols_to_keep_tr = []
+for col in vertigo_tr.columns:
+
+    x = vertigo_tr[col]
+
+    dict_col = {}
+    for val in x:
+        if val not in dict_col:
+            dict_col[val] = 1
+        else:
+            dict_col[val] = dict_col[val] + 1
+
+    if dict_col[0]/x.shape[0] > threshold:
+        pass
+    else:
+        cols_to_keep_tr.append(col)
+
+
+
+vertigo_tr = vertigo_tr[cols_to_keep_tr]
+
+
+
+plota_matriz_correlacao(vertigo_tr)
+plt.matshow(vertigo_tr.corr(method='pearson'))
+plt.show()
